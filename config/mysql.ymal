@@ -1,5 +1,0 @@
-mysql:
- address:127.0.0.1
- port:3306
- username:monty
- password:some_pass

@@ -1,13 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"context"
 	"log"
 	"os"
 	"time"
 
+	pb "github.com/proudlily/test_circleci/proto"
 	"google.golang.org/grpc"
-	pb "google.golang.org/grpc/examples/helloworld/helloworld"
 )
 
 const (
@@ -24,16 +25,20 @@ func main() {
 	defer conn.Close()
 	c := pb.NewGreeterClient(conn)
 
-	// Contact the server and print out its response.
-	name := defaultName
-	if len(os.Args) > 1 {
-		name = os.Args[1]
+	scanner := bufio.NewScanner(os.Stdin)
+
+	for scanner.Scan() {
+		// Contact the server and print out its response.
+		name := scanner.Text()
+
+		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+		defer cancel()
+
+		r, err := c.SayHello(ctx, &pb.HelloRequest{Message: name})
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		log.Printf("%s", r.GetMessage())
 	}
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
-	}
-	log.Printf("Greeting: %s", r.GetMessage())
+
 }
