@@ -7,7 +7,7 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: docker login -u $username -p $password
+      - run: docker login -u annqlm -p Annqlm2020
       - run: make build
   deploy-prod:
     docker:
