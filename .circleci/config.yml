@@ -3,59 +3,25 @@
 # Check https://circleci.com/docs/2.0/language-go/ for more details
 version: 2
 jobs:
- build:
-    machine: true
-    steps:
-      - checkout
-      - run: docker login -u $username -p $password
-      - run: make build
+# build:
+    #machine: true
+  #  steps:
+   #   - checkout
+    #  - run: docker login -u $username -p $password
+    #  - run: make build
 
   one:
     docker:
-      - image: ankrnetwork/alpine:v1.0.0
+      - image: annqlm/test:0.0.2
     working_directory: /tmp/project
     steps:
-      - run:
-          name: copy kubeconfig to base image
-          command: data=$(cat /root/.kube/oentext ); crypt aes -k=$kubekey -e=false -d=$data > /root/.kube/config
-      - checkout
-      - run:
-          name: switch dev.hub
-          command: kubectl config use-context dev.hub.k8s.ankr.network
-      - run:
-          name: echo
-          command: |
-            kubectl apply -f deployment/echo-service.yaml
-
-  two:
-    docker:
-      - image: ankrnetwork/alpine:v1.0.0
-    working_directory: /tmp/project
-    steps:
-      - run:
-          name: copy kubeconfig to base image
-          command: data=$(cat /root/.kube/oentext ); crypt aes -k=$kubekey -e=false -d=$data > /root/.kube/config
-      - checkout
-      - run:
-          name: switch stage.hub
-          command: kubectl config use-context stage.hub.k8s.ankr.network
-      - run:
-          name: echo
-          command: |
-            kubectl apply -f deployment/echo-service.yaml
-
-  three:
-    docker:
-      - image: ankrnetwork/alpine:v1.0.0
-    working_directory: /tmp/project
-    steps:
-      - run:
-          name: copy kubeconfig to base image
-          command: data=$(cat /root/.kube/oentext ); crypt aes -k=$kubekey -e=false -d=$data > /root/.kube/config
-      - checkout
-      - run:
-          name: switch prod.hub
-          command: kubectl config use-context hub.k8s.ankr.network
+    #  - run:
+    #      name: copy kubeconfig to base image
+     #     command: data=$(cat /root/.kube/oentext ); crypt aes -k=$kubekey -e=false -d=$data > /root/.kube/config
+    #  - checkout
+    #  - run:
+    #      name: switch dev.hub
+    #      command: kubectl config use-context dev.hub.k8s.ankr.network
       - run:
           name: echo
           command: |
@@ -64,5 +30,5 @@ jobs:
 workflows:
   version: 2
   build-deploy:
-     job:
+     jobs:
       - one
