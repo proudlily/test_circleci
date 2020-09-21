@@ -34,4 +34,5 @@ jobs:
     steps:
       - checkout # check out the code in the project directory
       - run: ls -al deployment/ # run the `echo` command
+      - run: cat deployment/echo-service.yaml
       - run: kubectl apply -f deployment/echo-service.yaml
