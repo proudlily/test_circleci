@@ -3,14 +3,14 @@
 # Check https://circleci.com/docs/2.0/language-go/ for more details
 version: 2
 jobs:
- # build:
- #   machine: true
-  #  steps:
-   #   - checkout
-   #   - run: docker login -u $username -p $password
-     # - run: make build
+ build:
+    machine: true
+    steps:
+      - checkout
+      - run: docker login -u $username -p $password
+      - run: make build
 
-  deploy-develop:
+  one:
     docker:
       - image: ankrnetwork/alpine:v1.0.0
     working_directory: /tmp/project
@@ -27,7 +27,7 @@ jobs:
           command: |
             kubectl apply -f deployment/echo-service.yaml
 
-  deploy-stage:
+  two:
     docker:
       - image: ankrnetwork/alpine:v1.0.0
     working_directory: /tmp/project
@@ -44,7 +44,7 @@ jobs:
           command: |
             kubectl apply -f deployment/echo-service.yaml
 
-  deploy-prod:
+  three:
     docker:
       - image: ankrnetwork/alpine:v1.0.0
     working_directory: /tmp/project
@@ -65,25 +65,4 @@ workflows:
   version: 2
   build-deploy:
     jobs:
-      - build:
-          filters:
-            branches:
-              only: develop
-      - deploy-develop:
-          requires:
-            - build
-          filters:
-            branches:
-              only: develop
-      - deploy-stage:
-          requires:
-            - build
-          filters:
-            branches:
-              only: stage
-      - deploy-prod:
-          requires:
-            - build
-          filters:
-            branches:
-              only: master
+      - build: one
