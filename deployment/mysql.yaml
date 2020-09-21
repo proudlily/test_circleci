@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment #部署的名字
+spec:
+  selector:
+    matchLabels:
+      app: mysql-app #让对应的service识别的pod名字
+  template:
+    metadata:
+      labels:
+        app: mysql-app
+    spec:
+      containers:
+      - name: mysql-container
+        image: mysql
+        env:   #  定义环境变量
+            - name: MYSQL_ROOT_PASSWORD  #  环境变量名
+              value: root  #  环境变量值
+            - name: MYSQL_USER
+              value: dbuser
+            - name: MYSQL_PASSWORD
+              value: dbuser
+        ports:
+          - containerPort: 3306
+            name: mysql-port
+            protocol: TCP

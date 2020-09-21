@@ -58,7 +58,7 @@ func echo(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	fmt.Fprintf(w, output) //这个写入到w的是输出到客户端的
-	insertData(output)
+	//insertData(output)
 }
 
 var DB *sql.DB
@@ -83,7 +83,7 @@ type sayHello struct {
 
 func (this *sayHello) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloReply, error) {
 	if in.Message != "" {
-		insertData(in.Message)
+		//insertData(in.Message)
 	}
 	return &pb.HelloReply{Message: in.Message}, nil
 }
@@ -117,22 +117,22 @@ func tcpServer() {
 
 func main() {
 	//读取mysql的配置
-	conf, err := ReadYamlConfig("../config/mysql.yaml")
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
+	/*	conf, err := ReadYamlConfig("../config/mysql.yaml")
+		if err != nil {
+			log.Fatal(err)
+			return
+		}
 
-	//db_line = "monty:some_pass@tcp(127.0.0.1:3306)/test?charset=utf8"
-	db_line := conf.Mysql.Username + ":" + conf.Mysql.Password + "@tcp(" + conf.Mysql.Address + ":" + conf.Mysql.Port + ")/test?charset=utf8"
-	db, err := sql.Open("mysql", db_line)
-	if err != nil {
-		fmt.Printf("failed to connect mysql:%s\n", err)
-		return
-	}
-	DB = db
+		//db_line = "monty:some_pass@tcp(127.0.0.1:3306)/test?charset=utf8"
+		db_line := conf.Mysql.Username + ":" + conf.Mysql.Password + "@tcp(" + conf.Mysql.Address + ":" + conf.Mysql.Port + ")/test?charset=utf8"
+		db, err := sql.Open("mysql", db_line)
+		if err != nil {
+			fmt.Printf("failed to connect mysql:%s\n", err)
+			return
+		}
+		DB = db
 
-	defer DB.Close()
+		defer DB.Close()*/
 
 	go httpServer()
 	go tcpServer()

@@ -1,0 +1,13 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: jmz-pod
+  labels:
+    app: jmz-pod-bash
+    tir: backend
+
+spec:
+  containers:
+  - name: bash-container
+    image: busybox
+    command: ["sh", "-c","echo ok && sleep 3000"]

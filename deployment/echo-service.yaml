@@ -1,0 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo-service
+spec:
+  #type: NodePort
+  type: NodePort
+  ports:
+    - name: echo-grpc-port
+      port: 50051
+      protocol: TCP
+      targetPort: 50051
+    - name: echo-rest-port
+      port: 9090
+      protocol: TCP
+      targetPort: 9090
+  selector:
+    app: echo
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echo
+spec:
+  selector:
+    matchLabels:
+      app: echo
+  template:
+    metadata:
+      labels:
+         app: echo
+    spec:
+      containers:
+        - name: echo
+       #   imagePullPolicy: Always
+          image: annqlm/test:0.0.2
+          ports:
+            - containerPort: 50051
+              name: grpc-port
+              protocol: TCP
+            - containerPort: 9090
+              name: rest-port
+              protocol: TCP
