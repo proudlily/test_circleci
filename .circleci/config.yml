@@ -3,16 +3,16 @@
 # Check https://circleci.com/docs/2.0/language-go/ for more details
 version: 2
 jobs:
-  build:
-    machine: true
-    steps:
-      - checkout
-      - run: docker login -u $username -p $password
-      - run: make build
+ # build:
+ #   machine: true
+  #  steps:
+   #   - checkout
+   #   - run: docker login -u $username -p $password
+     # - run: make build
 
   deploy-develop:
     docker:
-      - image: annqlm/test:0.0.2
+      - image: ankrnetwork/alpine:v1.0.0
     working_directory: /tmp/project
     steps:
       - run:
@@ -29,7 +29,7 @@ jobs:
 
   deploy-stage:
     docker:
-      - image: annqlm/test:0.0.2
+      - image: ankrnetwork/alpine:v1.0.0
     working_directory: /tmp/project
     steps:
       - run:
@@ -46,7 +46,7 @@ jobs:
 
   deploy-prod:
     docker:
-      - image: annqlm/test:0.0.2
+      - image: ankrnetwork/alpine:v1.0.0
     working_directory: /tmp/project
     steps:
       - run:
