@@ -1,8 +1,89 @@
-version: 2.1
+# Golang CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-go/ for more details
+version: 2
 jobs:
   build:
-    docker: 
-      - image: circleci/node:4.8.2 # the primary container, where your job's commands are run
+    machine: true
     steps:
-      - checkout # check out the code in the project directory
-      - run: echo "hello world" # run the `echo` command
+      - checkout
+      - run: docker login -u $username -p $password
+      - run: make build
+
+  deploy-develop:
+    docker:
+      - image: annqlm/test:0.0.2
+    working_directory: /tmp/project
+    steps:
+      - run:
+          name: copy kubeconfig to base image
+          command: data=$(cat /root/.kube/oentext ); crypt aes -k=$kubekey -e=false -d=$data > /root/.kube/config
+      - checkout
+      - run:
+          name: switch dev.hub
+          command: kubectl config use-context dev.hub.k8s.ankr.network
+      - run:
+          name: echo
+          command: |
+            kubectl apply -f deployment/echo-service.yaml
+
+  deploy-stage:
+    docker:
+      - image: annqlm/test:0.0.2
+    working_directory: /tmp/project
+    steps:
+      - run:
+          name: copy kubeconfig to base image
+          command: data=$(cat /root/.kube/oentext ); crypt aes -k=$kubekey -e=false -d=$data > /root/.kube/config
+      - checkout
+      - run:
+          name: switch stage.hub
+          command: kubectl config use-context stage.hub.k8s.ankr.network
+      - run:
+          name: echo
+          command: |
+            kubectl apply -f deployment/echo-service.yaml
+
+  deploy-prod:
+    docker:
+      - image: annqlm/test:0.0.2
+    working_directory: /tmp/project
+    steps:
+      - run:
+          name: copy kubeconfig to base image
+          command: data=$(cat /root/.kube/oentext ); crypt aes -k=$kubekey -e=false -d=$data > /root/.kube/config
+      - checkout
+      - run:
+          name: switch prod.hub
+          command: kubectl config use-context hub.k8s.ankr.network
+      - run:
+          name: echo
+          command: |
+            kubectl apply -f deployment/echo-service.yaml
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only: develop
+      - deploy-develop:
+          requires:
+            - build
+          filters:
+            branches:
+              only: develop
+      - deploy-stage:
+          requires:
+            - build
+          filters:
+            branches:
+              only: stage
+      - deploy-prod:
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
